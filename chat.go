@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"math/rand"
 	"os"
 	"reflect"
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 )
 
 // Tout ce code est ajouté pour le mini-projet 3
@@ -99,9 +97,7 @@ func (p peer) sendMessages(myClock *clock) {
 			protocolMsg = "public:::" + protocoleClock + ":::" + protocolMsg
 		}
 
-		timeSleeping := rand.Intn(10)
-		log.Print("J'envoie ceci : '", protocolMsg[:len(protocolMsg)-1], "' à ", p.addr, " avec un délai de ", timeSleeping, " secondes.")
-		time.Sleep(time.Second * time.Duration(timeSleeping))
+		log.Print("J'envoie ceci : '", protocolMsg[:len(protocolMsg)-1], "' à ", p.addr)
 		_, err1 := writer.WriteString(protocolMsg)
 		err2 := writer.Flush()
 		if err1 != nil || err2 != nil {
