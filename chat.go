@@ -128,6 +128,7 @@ func (peers *peerCollection) prepareChatMessages(myClock *clock) {
 		// mais seulement écrire dans un canal
 		peers.access.RLock()
 		myClock.access.Lock()
+		//on envoie un message donc on augmente sa clock de 1
 		myClock.clockMap["127.0.0.1:"+myClock.myPort] += 1
 		myClock.access.Unlock()
 		if peerID, err := strconv.Atoi(splitInput[0]); len(splitInput) >= 2 && err == nil && peerID < len(peers.peers) {
@@ -160,7 +161,7 @@ func displayChatMessages(receiveChan chan chatMessage, myClock *clock) {
 
 		msgToCompare = <-receiveChan
 
-		//compare
+		//compare les 2 clocks des messages reçus
 		msg, msgToCompare = compareClockMap(msg, msgToCompare)
 
 		//update de myclock
@@ -187,6 +188,8 @@ func displayChatMessages(receiveChan chan chatMessage, myClock *clock) {
 
 func compareClockMap(message chatMessage, messageToCompare chatMessage) (chatMessage, chatMessage) {
 	isBefore := false
+	//Si toutes les valeurs de la clock de message sont inférieurs ou égales, celle-ci est donc avant celle de
+	//l'autre clock
 	for index, value := range message.fromClock {
 		valueToCompare := messageToCompare.fromClock[index]
 		if value <= valueToCompare {
